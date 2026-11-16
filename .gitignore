@@ -1,0 +1,31 @@
+# ==============================================================================
+# WololoRAG .gitignore
+# Prevents temporary files, local databases, virtual environments, and secrets
+# from ever being committed to Git.
+# ==============================================================================
+
+# Python virtual environments and bytecode caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Secret environment variables (NEVER commit .env!)
+.env
+.env.local
+
+# Local runtime databases (SQLite file + embedded Qdrant storage)
+data/
+*.db
+*.sqlite
+*.sqlite3
+
+# macOS and IDE artifacts
+.DS_Store
+.vscode/
+.idea/

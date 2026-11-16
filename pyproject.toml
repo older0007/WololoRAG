@@ -1,0 +1,64 @@
+# ==============================================================================
+# pyproject.toml — WololoRAG (Indexer Worker Microservice)
+# ==============================================================================
+
+[project]
+name = "wololo-rag"
+version = "0.1.0"
+description = "WololoRAG Indexer Worker: Two-phase ingestion of Wololo.net articles into SQL (PostgreSQL/SQLite) and Qdrant using LangChain, LangGraph, and Pydantic."
+readme = "README.md"
+requires-python = ">=3.11"
+
+dependencies = [
+    # --- Configuration & Strict Runtime Validation ---
+    "pydantic>=2.7.0",
+    "pydantic-settings>=2.2.0",
+    "pyyaml>=6.0.1",
+    "python-dotenv>=1.0.1",
+
+    # --- Relational State DB (SQLAlchemy ORM supporting both SQLite and PostgreSQL) ---
+    "sqlalchemy>=2.0.30",
+    "psycopg[binary]>=3.1.0",
+
+    # --- Web Scraping & HTML Cleaning for Wololo.net ---
+    "requests>=2.32.0",
+    "beautifulsoup4>=4.12.3",
+    "lxml>=5.2.0",
+
+    # --- Token Counting & Text Chunking ---
+    "tiktoken>=0.7.0",
+
+    # --- LangChain & LangGraph Orchestration (Node Graph / FSM + Embedding Interfaces) ---
+    "langchain-core>=0.3.0",
+    "langchain-text-splitters>=0.3.0",
+    "langchain-huggingface>=0.1.0",
+    "langchain-mistralai>=0.2.0",
+    "sentence-transformers>=3.0.0",
+    "langgraph>=0.2.0",
+
+    # --- Vector Database (Qdrant Client: supports local embedded mode & Docker server) ---
+    "qdrant-client>=1.11.0",
+
+    # --- Rich CLI Output ---
+    "rich>=13.7.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.2.0",
+]
+
+[project.scripts]
+wololo-indexer = "src.services.indexer.main:main"
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

@@ -1,0 +1,45 @@
+# ==============================================================================
+# Vector & Chunking Configuration (config/vector_config.yaml)
+# Dedicated configuration controlling how articles are split into token chunks
+# and how semantic similarity search queries Qdrant.
+# ==============================================================================
+
+chunking:
+  # Toggle chunking ON or OFF:
+  # - true:  Splits long articles into overlapping chunks of `chunk_size_tokens`.
+  #          Better for RAG precision because each vector represents one focused paragraph/idea.
+  # - false: Keeps the entire cleaned article as ONE single vector (useful for comparison/testing).
+  enabled: true
+
+  # Maximum size of each chunk measured in LLM TOKENS (not characters!).
+  # 400 tokens is roughly ~300 English words (~1.5 - 2 paragraphs).
+  chunk_size_tokens: 400
+
+  # Number of overlapping tokens repeated between consecutive chunks.
+  # Overlap prevents losing context when a sentence is cut near a chunk boundary.
+  chunk_overlap_tokens: 50
+
+  # Tiktoken BPE encoding used to count tokens accurately.
+  tokenizer_encoding: "cl100k_base"
+
+search:
+  # How many final results to return for a user query.
+  top_k: 5
+
+  # Minimum blended similarity score (0.0 to 1.0) required to include a match.
+  score_threshold: 0.25
+
+  # Vector distance metric in Qdrant: "Cosine", "Dot", or "Euclid".
+  distance_metric: "Cosine"
+
+  # Deduplication limit per article: prevents one long post from occupying all top_k slots.
+  max_chunks_per_article: 1
+
+  # Hybrid keyword boost (0.0 = pure vector similarity, 0.2 = 80% vector + 20% exact keyword overlap).
+  # Helps match exact firmware numbers, exploit names, and acronyms (e.g. "7.61", "bd-jb").
+  hybrid_keyword_weight: 0.2
+
+  # Retrieval output mode:
+  # - "best_chunk":   returns the most relevant chunk(s) per article (token-efficient).
+  # - "full_article": Parent-Document Retrieval — returns full cleaned text from SQL.
+  context_mode: "best_chunk"

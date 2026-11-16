@@ -1,0 +1,51 @@
+# ==============================================================================
+# Application Configuration (config/app_config.yaml) — WololoRAG Indexer
+# Validated at startup by Pydantic models in src/core/config.py.
+# ==============================================================================
+
+embedding:
+  # Switch between "local" (runs free on your CPU/Mac GPU) and "mistral" (cloud API).
+  # IMPORTANT: Local and Mistral generate vectors of different dimensions (384 vs 1024),
+  # so we automatically separate them into distinct Qdrant collections!
+  provider: "local"
+
+  local:
+    # Fast, lightweight English embedding model (384 dimensions).
+    # Downloaded once from HuggingFace and cached locally.
+    model_name: "sentence-transformers/all-MiniLM-L6-v2"
+    # Use "cpu" for maximum compatibility (including Docker), or "mps" on Apple Silicon.
+    device: "cpu"
+
+  mistral:
+    # You can paste your Mistral key here for local learning OR leave it empty ("")
+    # so Pydantic automatically reads MISTRAL_API_KEY from your .env file (recommended!).
+    api_key: ""
+    model_name: "mistral-embed"
+    timeout_sec: 30
+    max_retries: 3
+
+database:
+  # Full SQLAlchemy URL (e.g. "postgresql+psycopg://wololo:wololo_pass@localhost:5432/wololo_rag").
+  # Leave empty ("") to use `sqlite_path` below, OR override via DATABASE_URL in `.env`!
+  database_url: ""
+
+  # Fallback SQLite file used when database_url / DATABASE_URL is empty.
+  sqlite_path: "./data/wololo_state.db"
+
+  # Qdrant mode:
+  # - "local": stores vectors directly on disk in qdrant_local_path (no extra server needed).
+  # - "server": connects to Qdrant from `WololoRAG-Infra` at `qdrant_url` (enables Web UI!).
+  qdrant_mode: "local"
+  qdrant_local_path: "./data/qdrant"
+  qdrant_url: "http://localhost:6333"
+
+  # Prefix for Qdrant collection names; provider name is appended automatically
+  # (e.g., "wololo_articles_local" or "wololo_articles_mistral").
+  collection_prefix: "wololo_articles"
+
+scraper:
+  # Target WordPress site to index.
+  base_url: "https://wololo.net"
+  request_timeout_sec: 20
+  # Default batch size suggested when fetching new article metadata into SQL.
+  default_discover_batch: 20
